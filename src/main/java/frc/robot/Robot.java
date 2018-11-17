@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.command.StartCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.EncoderRunForWhile;
-import frc.robot.commands.Homing;
+import frc.robot.commands.Infeed_Homing;
 import frc.robot.models.LogDataBE;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.Infeed;
@@ -111,7 +111,7 @@ public class Robot extends TimedRobot
     auton.start();
     _scanTimeSamples = new MovingAverage(50);
     */
-    Homing auton = new Homing();
+    Infeed_Homing auton = new Infeed_Homing();
     auton.start();
   }
 
@@ -141,8 +141,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit() 
   {
-    Homing teleop = new Homing();
-    teleop.start();
+    
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -155,8 +154,11 @@ public class Robot extends TimedRobot
    */
   @Override
   public void teleopPeriodic() 
+
   {
     Scheduler.getInstance().run();
+    Infeed_Homing teleop = new Infeed_Homing();
+  
 
     // ============= Refresh Dashboard =============
 		outputAllToDashboard();

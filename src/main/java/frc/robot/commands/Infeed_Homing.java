@@ -25,11 +25,11 @@ import frc.robot.util.DataLogger;
  * An example command.  You can replace me with your own command.
  */
 public class 
-Homing extends Command 
+Infeed_Homing extends Command 
 {
     private Infeed _infeed = Infeed.getInstance();
 
-  public Homing() 
+  public Infeed_Homing() 
   {
       
     // Use requires() here to declare subsystem dependencies
@@ -49,7 +49,7 @@ Homing extends Command
   @Override
   protected void execute() 
   {
-    _infeed.homingMotor();
+    _infeed.homeArms();
     System.out.println("command is running");
     
 
@@ -61,7 +61,7 @@ Homing extends Command
   @Override
   protected boolean isFinished() 
     {
-    return _infeed.getIsRightArmHomed();
+    return _infeed.getIsArmsHomed();
     }
        
 
