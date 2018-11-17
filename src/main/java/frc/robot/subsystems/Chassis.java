@@ -98,7 +98,7 @@ public class Chassis extends Subsystem implements ISubsystem
     _leftMaster.set(ControlMode.PercentOutput, throttleCmdRaw + (0.7 * turnCmdRaw));
     _rightMaster.set(ControlMode.PercentOutput, throttleCmdRaw + (0.7 * -1.0 * turnCmdRaw));
   }
-
+  
   public int get_LeftEncoderNU()
   {
     return _leftMaster.getSelectedSensorPosition(0);
@@ -108,6 +108,12 @@ public class Chassis extends Subsystem implements ISubsystem
   {
     return _rightMaster.getSelectedSensorPosition(0);
   }
+  public void homeEncoderPos() 
+  {
+    _leftMaster.setSelectedSensorPosition(0, 0, 0);
+    _rightMaster.setSelectedSensorPosition(0, 0, 0);
+  }
+
 
   //=====================================================================================
 	// Special Methods for ISubsystem

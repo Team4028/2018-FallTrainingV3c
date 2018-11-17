@@ -13,9 +13,13 @@ import java.util.Date;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.StartCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.EncoderRunForWhile;
+import frc.robot.commands.Homing;
 import frc.robot.models.LogDataBE;
 import frc.robot.subsystems.Chassis;
+import frc.robot.subsystems.Infeed;
 import frc.robot.util.BeakUtilities;
 import frc.robot.util.DataLogger;
 import frc.robot.util.MovingAverage;
@@ -30,9 +34,10 @@ import frc.robot.util.MovingAverage;
 public class Robot extends TimedRobot 
 {
   // create instance of singelton Subsystems
-  private static final String ROBOT_NAME = "2019-FallTrainingV3-TestEncoder-TAB";
+  private static final String ROBOT_NAME = "2019-FallTrainingV3-TestEncoder-PAJ";
 
   private Chassis _chassis;
+  private Infeed _infeed;
   private OI _oi;
 
 	// class level working variables
@@ -54,8 +59,9 @@ public class Robot extends TimedRobot
   public void robotInit() 
   {
     _buildMsg = BeakUtilities.WriteBuildInfoToDashboard(ROBOT_NAME);
-
+    _scanTimeSamples = new MovingAverage(50);
     _chassis = Chassis.getInstance();
+    _infeed = Infeed.getInstance();
     _oi = OI.getInstance();
   }
 
@@ -89,6 +95,8 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit() 
   {
+
+    //_chassis.homeEncoderPos();
    // m_autonomousCommand = m_chooser.getSelected();
 
     /*
@@ -99,7 +107,12 @@ public class Robot extends TimedRobot
      */
 
     // schedule the autonomous command (example)
+    /*EncoderRunForWhile auton = new EncoderRunForWhile();
+    auton.start();
     _scanTimeSamples = new MovingAverage(50);
+    */
+    Homing auton = new Homing();
+    auton.start();
   }
 
   /**
@@ -109,6 +122,13 @@ public class Robot extends TimedRobot
   public void autonomousPeriodic() 
   {
     Scheduler.getInstance().run();
+
+    
+    // ============= Refresh Dashboard =============
+		outputAllToDashboard();
+		
+		// ============= Optionally Log Data =============
+		logAllData();
   }
 
   // ==============================================================================================
@@ -121,6 +141,8 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit() 
   {
+    Homing teleop = new Homing();
+    teleop.start();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -169,6 +191,7 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic() 
   {
+    outputAllToDashboard();
   }
 
 	/** Method to Push Data to ShuffleBoard */
@@ -182,7 +205,8 @@ public class Robot extends TimedRobot
     		// each subsystem should add a call to a outputToSmartDashboard method
     		// to push its data out to the dashboard
 
-    		_chassis.updateDashboard(); 
+        _chassis.updateDashboard(); 
+        _infeed.updateDashboard();
 	    	
     		// write the overall robot dashboard info
 	    	SmartDashboard.putString("Robot Build", _buildMsg);
@@ -195,7 +219,8 @@ public class Robot extends TimedRobot
     	}
     	
     	// snapshot when this scan ended
-    	_lastScanEndTimeInMSec = new Date().getTime();
+      _lastScanEndTimeInMSec = new Date().getTime();
+      
 	}
 
   	/** Method for Logging Data to the USB Stick plugged into the RoboRio */

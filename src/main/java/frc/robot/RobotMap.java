@@ -27,7 +27,8 @@ public class RobotMap
 	public static final int LEFT_DRIVE_SLAVEA_CAN_ADDR = 2;
 	public static final int RIGHT_DRIVE_MASTER_CAN_ADDR = 3;
 	public static final int RIGHT_DRIVE_SLAVEA_CAN_ADDR = 4;
-
+	public static final int RIGHT_INFEED_POS_ARM = 6;
+	public static final int LEFT_INFEED_POS_ARM = 5;
 	// cow bot
 	//public static final int LEFT_DRIVE_MASTER_CAN_ADDR = 11;
 	//public static final int LEFT_DRIVE_SLAVEA_CAN_ADDR = 15;
@@ -38,6 +39,7 @@ public class RobotMap
 	
 	// DIO Ports
 	//public static final int CARRIAGE_LIMIT_SWITCH_DIO_PORT = 0;
+	public static final int TEST_LIMIT_SWITCH_DIO_PORT_2 = 7;
 	
 	// Analog Ports
 	//public static final int STORED_PRESSURE_SENSOR_AIO_PORT = 0;	
