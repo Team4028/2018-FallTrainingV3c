@@ -305,7 +305,8 @@ public class BeakXboxController extends Joystick {
          * getRawY
          * @return Y with a deadzone
          */
-        public double getY() {
+        public double getY() 
+        {
             return rawY();
         }
 
@@ -315,7 +316,8 @@ public class BeakXboxController extends Joystick {
          * ...
          * @return Angle the thumbstick is pointing
          */
-        public double getAngle() {
+        public double getAngle() 
+        {
             final double angle = Math.atan2(rawX(), rawY());
             return Math.toDegrees(angle);
         }
@@ -324,7 +326,8 @@ public class BeakXboxController extends Joystick {
          * getMagnitude
          * @return A number between 0 and 1
          */
-        public double getMagnitude() {
+        public double getMagnitude() 
+        {
             double magnitude = scaleMagnitude(rawX(), rawY());
 
             if (magnitude > 1) {
@@ -338,7 +341,8 @@ public class BeakXboxController extends Joystick {
          * Get the adjusted thumbstick position (Magnitude <= 1)
          * @return True thumbstick position
          */
-        public double getTrueX() {
+        public double getTrueX() 
+        {
             final double x      = rawX();
             final double y      = rawY();
             final double angle  = Math.atan2(x, y);

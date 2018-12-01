@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.Infeed;
 import frc.robot.util.DataLogger;
 
@@ -28,19 +27,26 @@ public class
 Infeed_Homing extends Command 
 {
     private Infeed _infeed = Infeed.getInstance();
+    private Boolean _isForceZero;
 
-  public Infeed_Homing() 
+
+  public Infeed_Homing(boolean isForceZero) 
   {
       
     // Use requires() here to declare subsystem dependencies
     //requires(Robot.m_subsystem);
     requires(_infeed);
+    setInterruptible(false);
+    _isForceZero = isForceZero;
   }
   // Called just before this Command runs the first time
   @Override
   protected void initialize() 
   {
-     // _infeed.getLimitSwitchValue();
+    if(_isForceZero == true)
+    {
+      _infeed.setArmsFalse();
+    }
     
 
   }

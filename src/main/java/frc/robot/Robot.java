@@ -111,7 +111,7 @@ public class Robot extends TimedRobot
     auton.start();
     _scanTimeSamples = new MovingAverage(50);
     */
-    Infeed_Homing auton = new Infeed_Homing();
+    Infeed_Homing auton = new Infeed_Homing(false);
     auton.start();
   }
 
@@ -147,6 +147,9 @@ public class Robot extends TimedRobot
     // continue until interrupted by another command, remove
     // this line or comment it out.
     _scanTimeSamples = new MovingAverage(50);
+    Infeed_Homing teleop = new Infeed_Homing(false);
+    teleop.start();
+
   }
 
   /**
@@ -157,7 +160,7 @@ public class Robot extends TimedRobot
 
   {
     Scheduler.getInstance().run();
-    Infeed_Homing teleop = new Infeed_Homing();
+  
   
 
     // ============= Refresh Dashboard =============

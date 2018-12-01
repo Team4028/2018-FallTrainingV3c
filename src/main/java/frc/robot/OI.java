@@ -9,6 +9,7 @@ package frc.robot;
 
 import frc.robot.commands.Chassis_DriveWithJoySticks;
 import frc.robot.commands.Infeed_Homing;
+import frc.robot.commands.Motion_Magic_Infeed_Pos;
 import frc.robot.util.BeakXboxController;
 
 /**
@@ -44,7 +45,11 @@ public class OI
 		_driverGamePad.leftStick.whenReleased(new Chassis_DriveWithJoySticks(_driverGamePad.leftStick, _driverGamePad.rightStick));
 		_driverGamePad.rightStick.whenReleased(new Chassis_DriveWithJoySticks(_driverGamePad.leftStick, _driverGamePad.rightStick));
 
-		_driverGamePad.a.whenPressed(new Infeed_Homing());
+		_driverGamePad.a.whenPressed(new Infeed_Homing(true));
+		_driverGamePad.b.whenPressed(new Motion_Magic_Infeed_Pos(90));
+		_driverGamePad.x.whenPressed(new Motion_Magic_Infeed_Pos(45));
+		_driverGamePad.y.whenPressed(new Motion_Magic_Infeed_Pos(180));
+		
 	
 		// ================================
 		// Operator GamePad Commands
