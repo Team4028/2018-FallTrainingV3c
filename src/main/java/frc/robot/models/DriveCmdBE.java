@@ -4,7 +4,7 @@ package frc.robot.models;
  * A drivetrain command consisting of the left, right motor settings and whether
  * the brake mode is enabled.
  */
-public class DriveCmdBE 
+public class  DriveCmdBE
 {
 	protected double mLeftMotor;
 	protected double mRightMotor;

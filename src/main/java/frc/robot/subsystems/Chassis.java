@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
+/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -8,120 +8,88 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
-import frc.robot.interfaces.ISubsystem;
-import frc.robot.models.LogDataBE;
 
-/**
- * Chassis Class
- * 
- * Tank Drive
- *  - 3 Motor Gearbox per Side
- *  - Hi/Low Gear Pneumatic Shifter
- */
-public class Chassis extends Subsystem implements ISubsystem 
+
+public class Chassis extends Subsystem 
 {
-  // define class level working variables
-  private TalonSRX _leftMaster;
-  private TalonSRX _leftSlaveA;
-  private TalonSRX _leftSlaveB;
-  private TalonSRX _rightMaster;
-  private TalonSRX _rightSlaveA;
-  private TalonSRX _rightSlaveB;
 
+    private TalonSRX _leftMotorMaster;
+    private TalonSRX _leftMotorSlave;
 
-	//=====================================================================================
-	// Define Singleton Pattern
-	//=====================================================================================
+    private TalonSRX _rightMotorMaster;
+    private TalonSRX _rightMotorSlave;
+
+    private DoubleSolenoid _shifter;  
+    /*private static final double INFEED_F_MOTIONMAGIC = 0.33;
+    private static final double
+    private static final double
+    private static final double*/
+    private static final edu.wpi.first.wpilibj.DoubleSolenoid.Value SHIFTER_LOW_GEAR_POS = DoubleSolenoid.Value.kReverse;
+    private static final edu.wpi.first.wpilibj.DoubleSolenoid.Value SHIFTER_HIGH_GEAR_POS = DoubleSolenoid.Value.kForward;
+
+    private Chassis()
+    {   //left motors set
+        _leftMotorMaster = new TalonSRX(RobotMap.LEFT_DRIVE_MASTER_CAN_ADDR);
+        _leftMotorSlave = new TalonSRX(RobotMap.LEFT_DRIVE_SLAVE_CAN_ADDR);
+        _leftMotorSlave.follow(_leftMotorMaster);
+        
+        //right motors set
+        _rightMotorMaster = new TalonSRX(RobotMap.RIGHT_DRIVE_MASTER_CAN_ADDR);
+        _rightMotorSlave = new TalonSRX(RobotMap.RIGHT_DRIVE_SLAVE_CAN_ADDR);
+        _rightMotorSlave.follow(_rightMotorMaster);
+
+        _shifter = new DoubleSolenoid(RobotMap.SHIFTER_EXTEND_PCM_PORT,RobotMap.SHIFTER_RETRACT_PCM_PORT);
+
+        
+    }
+  
 	private static Chassis _instance = new Chassis();
 	
-  public static Chassis getInstance() 
-  {
+    public static Chassis getInstance() 
+    {
 		return _instance;
 	}
 	
-	// private constructor for singleton pattern
-  private Chassis()
-  {
-    // left side
-    _leftMaster = new TalonSRX(RobotMap.LEFT_DRIVE_MASTER_CAN_ADDR);
-    _leftSlaveA = new TalonSRX(RobotMap.LEFT_DRIVE_SLAVEA_CAN_ADDR);
-    //_leftSlaveB = new TalonSRX(RobotMap.LEFT_DRIVE_SLAVEB_CAN_ADDR);
+    public void setMotorSpeed (double driveSpeed, double turnSpeed)
+    {
+        double leftSpeed = (.4 * -driveSpeed ) + ( .5 * -turnSpeed);
+        double rightSpeed= (.4 * driveSpeed ) + (.5 * -turnSpeed);
+        //set the speed for the right chassis motor
+        _rightMotorMaster.set(ControlMode.PercentOutput, rightSpeed);
+        //set the speed for the left chassis motor
+        _leftMotorMaster.set(ControlMode.PercentOutput, leftSpeed);
+    }
 
-    _leftMaster.setInverted(true);
-    _leftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-    _leftMaster.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, 0);
-    _leftMaster.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, 0);
 
-    _leftSlaveA.setInverted(true);
-    _leftSlaveA.follow(_leftMaster);
+    public void setHighGear()
+    {
+        //set the gearbox to high gear
+        _shifter.set(Chassis.SHIFTER_HIGH_GEAR_POS);
 
-    //_leftSlaveB.setInverted(true);
-    //_leftSlaveB.follow(_leftMaster);
+    }
+    public void setLowGear()
+    {
+        //set the gearbox to low gear
+        _shifter.set(Chassis.SHIFTER_LOW_GEAR_POS);
+    }
 
-    // right side
-    _rightMaster = new TalonSRX(RobotMap.RIGHT_DRIVE_MASTER_CAN_ADDR);
-    _rightSlaveA = new TalonSRX(RobotMap.RIGHT_DRIVE_SLAVEA_CAN_ADDR);
-    //_rightSlaveB = new TalonSRX(RobotMap.RIGHT_DRIVE_SLAVEB_CAN_ADDR);
+    public synchronized boolean HighGear() 
+    {
+		return _shifter.get() == SHIFTER_HIGH_GEAR_POS;
+	}
 
-    _rightMaster.setInverted(false);
-    _rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-    _rightMaster.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, 0);
-    _rightMaster.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled, 0);
 
-    _rightSlaveA.setInverted(false);
-    _rightSlaveA.follow(_rightMaster);
-
-    //_rightSlaveB.setInverted(true);
-    //_rightSlaveB.follow(_leftMaster);
-  }
-
-  //=====================================================================================
-  // Methods for controlling this subsystem Called from Commands.
-  //=====================================================================================
   @Override
   public void initDefaultCommand() {
-
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
-  }
-
-  public void arcadeDrive(double throttleCmdRaw, double turnCmdRaw)
-  {
-    _leftMaster.set(ControlMode.PercentOutput, throttleCmdRaw + (0.7 * turnCmdRaw));
-    _rightMaster.set(ControlMode.PercentOutput, throttleCmdRaw + (0.7 * -1.0 * turnCmdRaw));
-  }
-
-  public int get_LeftEncoderNU()
-  {
-    return _leftMaster.getSelectedSensorPosition(0);
-  }
-
-  public int get_RightEncoderNU()
-  {
-    return _rightMaster.getSelectedSensorPosition(0);
-  }
-
-  //=====================================================================================
-	// Special Methods for ISubsystem
-	//=====================================================================================
-  @Override
-  public void updateLogData(LogDataBE logData) 
-  {
-
-  }
-
-  @Override
-  public void updateDashboard() 
-  {
-    SmartDashboard.putNumber("Carriage:LeftEncoderNU", get_LeftEncoderNU());
-    SmartDashboard.putNumber("Carriage:RightEncoderNU", get_RightEncoderNU());
+    
   }
 }
+
+
+
+ 
